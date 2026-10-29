@@ -183,6 +183,9 @@ h3 { font-family: var(--body); font-size: 16px; font-weight: bold; line-height: 
 .levels button { font: 13px/1 var(--body); min-width: 44px; padding: 6px 6px; border: 1px solid var(--edge); border-radius: 3px; background: var(--win-alt); color: var(--ink); cursor: pointer; }
 .levels button[aria-pressed="true"] { background: var(--title-b); color: var(--title-ink); border-color: var(--title-b); }
 .desc { background: var(--win-alt); border: 1px solid var(--edge); border-radius: 4px; padding: 10px 12px; min-height: 72px; }
+.desc ul { margin: 0; padding-left: 18px; display: grid; gap: 6px; }
+.desc ul ul { margin-top: 4px; gap: 2px; padding-left: 16px; list-style: circle; }
+.desc b { color: var(--ink); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .stats { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 6px; }
 .stat { border: 1px solid var(--edge); border-radius: 4px; padding: 4px 8px; }
 .stat span { display: block; font: 12px/1.4 var(--body); color: var(--muted); }
@@ -409,6 +412,53 @@ function jobPage(k, selected) {
 
 function fmt(v) { return v == null ? null : (Math.round(v * 100) / 100).toString(); }
 
+/* Skill tooltips are one dense line in game; here: one bullet per sentence, and "context: a, b, c" with several
+   numbered effects becomes a sub-list. Splits only outside parentheses. */
+function splitTop(t, sep) {
+  const out = [];
+  let depth = 0, cur = "";
+  for (let i = 0; i < t.length; i++) {
+    const c = t[i];
+    if (c === "(") depth++;
+    else if (c === ")") depth = Math.max(0, depth - 1);
+    if (depth === 0 && t.startsWith(sep, i)) { out.push(cur); cur = ""; i += sep.length - 1; continue; }
+    cur += c;
+  }
+  out.push(cur);
+  return out.map(x => x.trim()).filter(Boolean);
+}
+function sentences(t) {
+  const out = [];
+  let depth = 0, cur = "";
+  for (let i = 0; i < t.length; i++) {
+    const c = t[i];
+    cur += c;
+    if (c === "(") depth++;
+    else if (c === ")") depth = Math.max(0, depth - 1);
+    // A period then a capital or digit ends a sentence, unless it closes an abbreviation (B.S. Sacramenti).
+    if (depth === 0 && c === "." && t[i + 1] === " " && /[A-Z0-9]/.test(t[i + 2] || "") && !/(^|[\s.])[A-Z]\.$/.test(cur)) {
+      out.push(cur.trim()); cur = "";
+    }
+  }
+  if (cur.trim()) out.push(cur.trim());
+  return out;
+}
+const cap = t => t.charAt(0).toUpperCase() + t.slice(1);
+// Bold the numbers: +15, −30%, 2.5 s, 1.6×, 10 m.
+const nums = html => html.replace(/[+−-]?\d+(?:\.\d+)?(?:%|×| s\b| m\b)?/g, "<b>$&</b>");
+function descHtml(text) {
+  const li = sentences(text).map(sen => {
+    const parts = splitTop(sen, ": ");
+    if (parts.length === 2) {
+      const items = splitTop(parts[1].replace(/\.$/, ""), ", ");
+      if (items.length >= 2 && items.filter(x => /\d/.test(x)).length >= 2)
+        return `<li>${nums(esc(parts[0]))}:<ul>${items.map(x => `<li>${nums(esc(cap(x)))}</li>`).join("")}</ul></li>`;
+    }
+    return `<li>${nums(esc(sen))}</li>`;
+  });
+  return `<ul>${li.join("")}</ul>`;
+}
+
 function showSkill(id, lv, scroll) {
   const s = byId[id];
   if (!s) return;
@@ -432,7 +482,7 @@ function showSkill(id, lv, scroll) {
       <div class="head"><img class="px" src="icons/skills/${s.id}.png" alt=""><div><h3>${esc(s.name)}</h3>
         <span class="tag${s.active ? " act" : ""}">${s.active ? "Active" : "Passive"}</span><span class="tag">Max Lv ${s.max}</span>${s.implemented ? "" : '<span class="tag">Not in yet</span>'}</div></div>
       ${levels}
-      <div class="desc">${esc(s.desc[lv - 1])}</div>
+      <div class="desc">${descHtml(s.desc[lv - 1])}</div>
       ${stats ? `<div class="stats">${stats}</div>` : ""}
       ${req}`);
   el.querySelectorAll("[data-lv]").forEach(b => b.onclick = () => showSkill(id, +b.dataset.lv, false));
@@ -492,6 +542,11 @@ function jobGrowth(k) {
 }
 
 function growth() {
+  const bonusRows = ["knight", "hunter", "wizard", "assassin", "priest"].map(k => {
+    const txt = BONUS[k] ? BONUS[k].map(([l, v, f]) => `${l} ${f(v)}`).join(", ")
+      : `MATK and eitr count Mage + Wizard job levels (up to MATK +${pct(G.matkPerLevel * 100)}, eitr +100)`;
+    return `<tr><td>${chip(k)}</td><td>${txt}</td></tr>`;
+  }).join("");
   return win("Character Growth", `
     <h2>How your character grows</h2>
     <p>Valheim's own progression stays: skills level by use, gear comes from the next biome, food sets your health and stamina. The mod adds RO's <b>job level</b> on top. All three feed your skills.</p>
