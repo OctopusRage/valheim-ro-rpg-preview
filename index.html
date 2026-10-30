@@ -302,7 +302,7 @@ const PAGES = [
   ["Guide", [["home", "Overview"], ["start", "Getting started"], ["growth", "Character growth"], ["world", "World and levels"]]],
   ["1st jobs", FIRST.map(k => [k, JOBS[k].name, true])],
   ["2nd jobs", FIRST.map(k => [JOBS[k].next, JOBS[JOBS[k].next].name, true])],
-  ["Reference", [["elements", "Elements"], ["items", "Items and crafting"], ["controls", "Keys and lock-on"], ["server", "Server and QoL"], ["commands", "Commands"], ["changelog", "Changelog"]]],
+  ["Reference", [["elements", "Elements"], ["items", "Items and crafting"], ["controls", "Keys and lock-on"], ["server", "Server and QoL"], ["changelog", "Changelog"]]],
 ];
 
 function renderNav(cur) {
@@ -688,27 +688,6 @@ function server() {
       <p>Every skill ships with the mod's own sounds and effect textures, drawn after RO's. If you have a Ragnarok Online client, set <code>[Sounds] RoClientFolder</code> to its folder (the one with <code>data.grf</code>) and skills play RO's own sounds, read while the game runs. Add <code>[Textures] PreferRoTextures = true</code> for RO's effect textures too. Nothing from RO is included in the mod.</p>`);
 }
 
-function commands() {
-  const rows = [
-    ["ro_job, ro_skills", "Show your job and skills"],
-    ["ro_cast <id>", "Cast a learned skill directly"],
-    ["ro_testjob <job>", "Become that job at Job Lv 50 with every skill maxed, test weapons and skills on the bar"],
-    ["ro_setjob <job>", "Switch job"],
-    ["ro_setlevel <n> [job]", "Set a job's level"],
-    ["ro_addexp <n>", "Add job EXP"],
-    ["ro_altar [freya|valkyrie]", "Spawn a Job Altar or a boss shrine in front of you"],
-    ["ro_dummy [creature] / ro_dummy clear", "Spawn or remove an immortal training dummy that shows damage per hit"],
-    ["ro_dummy_live <prefab> [stars]", "Passive dummies that can die, with a kill time"],
-    ["ro_weapons", "Every craftable weapon your job uses, weakest first"],
-    ["ro_nocd", "Toggle: no cooldowns, delays or costs"],
-    ["ro_traps [N]", "Give Hunter's Traps"],
-    ["ro_arrows [type] [N]", "Give arrows or bolts"],
-    ["ro_lures [tier] [N]", "Give taming lures"],
-  ];
-  return win("Console", `<h2>Testing commands</h2><p>F5 console. Most need <code>devcommands</code> first.</p>
-    <div class="tablewrap"><table>${rows.map(([a, b]) => `<tr><td style="white-space:nowrap"><code>${esc(a)}</code></td><td>${b}</td></tr>`).join("")}</table></div>`);
-}
-
 function changelog() {
   const out = [];
   let sec = null, stack = [];
@@ -731,7 +710,7 @@ function changelog() {
 
 /* ───────── Routing and search ───────── */
 
-const ROUTES = { home, start, growth, world, elements, items, controls, server, commands, changelog };
+const ROUTES = { home, start, growth, world, elements, items, controls, server, changelog };
 
 function route() {
   let k = (location.hash || "#home").slice(1);
