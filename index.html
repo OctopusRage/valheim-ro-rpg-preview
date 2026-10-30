@@ -505,7 +505,7 @@ const plus = v => "+" + (Math.round(v * 10) / 10);
 const BONUS = {
   knight: [["Melee damage (any melee weapon)", G.bonusDamage, plusPct], ["Max health", G.knightHealth, plus]],
   hunter: [["Bow damage", G.bonusDamage, plusPct], ["Max stamina", G.hunterStamina, plus]],
-  assassin: [["Knife attack speed", G.assassinSpeed, plusPct], ["Evade chance", G.assassinEvade, plusPct]],
+  assassin: [["Knife attack and knife skill speed (after-cast delay shorter too)", G.assassinSpeed, plusPct], ["Evade chance", G.assassinEvade, plusPct]],
   priest: [["Heal power", G.priestHeal, plusPct], ["Max eitr (with a staff or mace)", G.priestEitr, plus]],
   blacksmith: [["Axe and mace damage", G.blacksmithDamage, plusPct], ["Carry weight", G.blacksmithCarry, plus]],
 };
