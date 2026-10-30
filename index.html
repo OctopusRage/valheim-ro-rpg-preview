@@ -705,9 +705,41 @@ function server() {
         <tr><td><code>[QoL] StackSizeMultiplier</code></td><td>Stacks up to 5×</td></tr>
         <tr><td><code>[QoL] NoFoodDegradation</code></td><td>Full food stats until it runs out</td></tr>
         <tr><td><code>[QoL] AutoStoreProduce</code></td><td>Smelters, kilns, windmills, fermenters, beehives, cooking stations… put what they make into a nearby chest</td></tr>
+        <tr><td><code>[QoL] AutoStoreRange</code></td><td>How far a chest can be for the two settings above, 2–40 m (default 15)</td></tr>
         <tr><td><code>[QoL] AutoCookFromChests</code></td><td>Shift + Use on a cooking station or cauldron: pick what it cooks from nearby chests</td></tr>
       </table></div>
-      <p class="note">QoL settings are off by default. Always on: a <b>Repair all</b> button beside the Repair button at workbenches and forges.</p>`)
+      <p class="note">QoL settings are off by default. What each one does: <i>Quality of life</i> below.</p>`)
+  + win("Quality of Life", `<h2>Quality of life</h2>
+      <h3>Always on</h3>
+      <ul class="growlist">
+        <li><b>Repair all:</b> a button beside the Repair button at workbenches and forges mends every worn item that station can repair, in one press.</li>
+        <li><b>Raincoat:</b> craft it at a Workbench Lv 3 (4 Deer hide, 8 Leather scraps, 12 Resin). While you wear it you don't get Wet.</li>
+        <li><b>Tamed creatures follow you:</b> press Use on any tamed creature (boars and hens too) to make it follow you or stay. One you tame with a <a href="#items">lure</a> follows you at once.</li>
+        <li><b>Status window</b> (<code>Alt+A</code>): your stats with every bonus worked in, and a <i>Jobs</i> tab with every job's level, EXP and points. The <i>Inherited</i> section lists what your mastered jobs give.</li>
+        <li><b>Item bar or skill bar:</b> keys 1–8 cast skills; <code>Alt+E</code> switches them back to the item hotbar, <code>Alt+S</code> to the next skill stack.</li>
+        <li><b>With SeneaL UI:</b> the Main Hand and Off Hand slots can be dragged from like any other item, and equipped weapons stay in their hotbar cell.</li>
+      </ul>
+      <h3>Server settings (off by default)</h3>
+      <ul class="growlist">
+        <li><b>Bigger stacks</b> (<code>StackSizeMultiplier</code> 2–5): 2 means 100 wood a stack instead of 50.</li>
+        <li><b>Food that doesn't fade</b> (<code>NoFoodDegradation</code>): full health, stamina and eitr until the food runs out. Its time still runs down as usual.</li>
+        <li><b>Auto-store</b> (<code>AutoStoreProduce</code>): what smelters, kilns, windmills, spinning wheels, fermenters, beehives, sap collectors and cooking stations make goes into a chest within range, not onto the ground. A chest that already holds it first, else the nearest one with room. Cooked food is taken off before it burns.</li>
+        <li><b>Auto-cook</b> (<code>AutoCookFromChests</code>, needs auto-store): hold <code>Shift</code> and press Use on a cooking station, an oven's food spot or a cauldron (controller: <code>LT</code> + <code>A</code>) to open its auto-cook window.
+          <ul>
+            <li>A <b>cooking station or oven</b> lists the raw foods it can cook that your chests hold. Switch each on or off; while it's lit or fuelled it takes them from the chests onto its empty slots, and the cooked food goes back into a chest.</li>
+            <li>A <b>cauldron</b> lists the recipes you know that it can make. Switched on, it makes one batch every 10 s while there's fire under it, from the chests' ingredients, into a chest. Recipes take turns.</li>
+            <li>Each row's gear sets its rules: how much of each raw food or ingredient to keep in the chests, and how much of the food to stop at.</li>
+          </ul></li>
+      </ul>
+      <h3>Your own settings</h3>
+      <div class="tablewrap"><table>
+        <tr><th>Setting</th><th>What</th></tr>
+        <tr><td><code>[Display] RoDamageNumbers</code></td><td>RO-style pixel damage numbers (on by default): yellow on a weakness, grey when resisted, gold for criticals, green heals</td></tr>
+        <tr><td><code>[Music] UseModMusic</code></td><td>The mod's own music in most biomes (on by default)</td></tr>
+        <tr><td><code>[SkillBar] Stacks</code></td><td>How many skill stacks of 8 slots (1–8, default 4)</td></tr>
+        <tr><td><code>[SkillBar] ShowKeyHints</code></td><td>Key hints under the hotbar and skill bar</td></tr>
+        <tr><td><code>[Gamepad] Enabled</code></td><td>Controller skill controls (see <a href="#controls">Keys</a>)</td></tr>
+      </table></div>`)
   + win("RO Client", `<h2>Optional: RO sounds and textures</h2>
       <p>Every skill ships with the mod's own sounds and effect textures, drawn after RO's. If you have a Ragnarok Online client, set <code>[Sounds] RoClientFolder</code> to its folder (the one with <code>data.grf</code>) and skills play RO's own sounds, read while the game runs. Add <code>[Textures] PreferRoTextures = true</code> for RO's effect textures too. Nothing from RO is included in the mod.</p>`);
 }
