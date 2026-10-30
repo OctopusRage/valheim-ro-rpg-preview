@@ -287,7 +287,7 @@ const JOBS = {
     blurb: "Traps set with crafted Hunter's Traps (Skid, Land Mine, Ankle Snare, Shockwave, Flasher, Sandman, Freezing, Blast Mine, Claymore), and a crow at your side instead of RO's falcon: Blitz Beat, Auto Blitz, Steel Crow. Fear Breeze for extra arrows, Sky Hunter against flyers." },
   wizard: { name: "Wizard", tier: 2, from: "mage", weapon: "A staff; the craftable Black Metal Staff covers the Plains", bonus: "MATK and eitr keep growing",
     blurb: "Jupitel Thunder, Lord of Vermilion, Meteor Storm, Storm Gust, Earth Spike, Heaven's Drive, Quagmire, Water Ball (needs water close by or rain), Ice Wall, Frost Nova, Sight Rasher, Fire Pillar and Sense." },
-  assassin: { name: "Assassin", tier: 2, from: "thief", weapon: "Knives, one or two (Valheim has no katars)", bonus: "Knife damage and evade",
+  assassin: { name: "Assassin", tier: 2, from: "thief", weapon: "Knives, one or two (Valheim has no katars)", bonus: "Knife attack speed and evade",
     blurb: "Sonic Blow's 8 fast stabs, Dual Wield with an off-hand knife, Cloaking, Grimtooth from hiding, Enchant Poison, Poison React and Venom Dust. New Ashlands weapon: Twinknives of Naught." },
   priest: { name: "Priest", tier: 2, from: "acolyte", weapon: "A staff or a mace", bonus: "Heal power and max eitr",
     blurb: "The group's buffer, weak alone (its MATK stops at Acolyte Lv 50). Sanctuary, Magnus Exorcismus, Kyrie Eleison, Impositio Manus, Suffragium, Aspersio, Magnificat, Lex Divina, Lex Aeterna, Turn Undead and Resurrection: a dying player near the Priest falls instead and can wait 30 s to be raised with no death penalty." },
@@ -505,7 +505,7 @@ const plus = v => "+" + (Math.round(v * 10) / 10);
 const BONUS = {
   knight: [["Melee damage (any melee weapon)", G.bonusDamage, plusPct], ["Max health", G.knightHealth, plus]],
   hunter: [["Bow damage", G.bonusDamage, plusPct], ["Max stamina", G.hunterStamina, plus]],
-  assassin: [["Knife damage", G.bonusDamage, plusPct], ["Evade chance", G.assassinEvade, plusPct]],
+  assassin: [["Knife attack speed", G.assassinSpeed, plusPct], ["Evade chance", G.assassinEvade, plusPct]],
   priest: [["Heal power", G.priestHeal, plusPct], ["Max eitr (with a staff or mace)", G.priestEitr, plus]],
   blacksmith: [["Axe and mace damage", G.blacksmithDamage, plusPct], ["Carry weight", G.blacksmithCarry, plus]],
 };
