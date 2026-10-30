@@ -279,6 +279,8 @@ const JOBS = {
     blurb: "Fast and hard to hit. Double Attack, Envenom's poison, Steal, Hiding and Improve Dodge; Detoxify for the swamp." },
   acolyte: { name: "Acolyte", tier: 1, next: "priest", weapon: "A staff or a mace", starter: "Basic Rod and Acolyte's Mace",
     blurb: "Heal (it burns Undead), Holy Light, Blessing, Increase and Decrease AGI, Angelus, Cure, Signum Crucis, Ruwach, Pneuma against arrows and spit, and Teleport home or through a Warp Portal to your Memo spots. A mace gives eitr by its biome." },
+  merchant: { name: "Merchant", tier: 1, next: "blacksmith", weapon: "An axe, a mace or a sword", starter: "Merchant's Axe",
+    blurb: "Mammonite pays coins for a big hit. Lumber and Ore Discovery give more wood and ore, Enlarge Weight Limit a bigger load, Quick Sale sells your loot for coins, and the Adventurer's Pack is a second inventory on your back (16 slots, its own weight limit) that Burden Swing swings round at everything near you. Crazy Uproar is a war cry: more damage for the whole group." },
   knight: { name: "Knight", tier: 2, from: "swordman", weapon: "Swords and spears", bonus: "Melee damage and health",
     blurb: "The full RO tree: Bowling Bash, Pierce, Spear Stab, Brandish Spear, Spear Boomerang, Two-Hand Quicken, Auto Counter (the first enemy to hit you takes a critical counter, no block needed), Peco Peco Ride and Charge Attack." },
   hunter: { name: "Hunter", tier: 2, from: "archer", weapon: "Bows and crossbows", bonus: "Bow damage and stamina",
@@ -289,9 +291,11 @@ const JOBS = {
     blurb: "Sonic Blow's 8 fast stabs, Dual Wield with an off-hand knife, Cloaking, Grimtooth from hiding, Enchant Poison, Poison React and Venom Dust. New Ashlands weapon: Twinknives of Naught." },
   priest: { name: "Priest", tier: 2, from: "acolyte", weapon: "A staff or a mace", bonus: "Heal power and max eitr",
     blurb: "The group's buffer, weak alone (its MATK stops at Acolyte Lv 50). Sanctuary, Magnus Exorcismus, Kyrie Eleison, Impositio Manus, Suffragium, Aspersio, Magnificat, Lex Divina, Lex Aeterna, Turn Undead and Resurrection: a dying player near the Priest falls instead and can wait 30 s to be raised with no death penalty." },
+  blacksmith: { name: "Blacksmith", tier: 2, from: "merchant", weapon: "An axe, a mace or a sword", bonus: "Axe and mace damage, carry weight",
+    blurb: "Forging gives any weapon two slots: an element (Fire, Frost, Lightning or Poison; all its physical damage becomes that element) and a power slot rolling +1-5% ATK (MATK on staves), attack speed, health, eitr or stamina. A failed attempt costs only the materials; resetting a slot may break the weapon. Adrenaline Rush (faster axe, mace and sword attacks) and Over Thrust (more physical damage) for the whole group, Weapon Perfection, Maximize Power, Hammer Fall's stun, Weapon Repair (5 coal: everything you or an ally carries), Iron Tempering's extra bars, Greed and Dubious Salesmanship." },
 };
-const FIRST = ["swordman", "archer", "mage", "thief", "acolyte"];
-const WEAPON = { Melee: "Melee weapon", Bow: "Bow", Staff: "Staff", Dagger: "Knife", Sword: "Sword", Spear: "Spear", TwoHandSword: "Two-handed sword" };
+const FIRST = ["swordman", "archer", "mage", "thief", "acolyte", "merchant"];
+const WEAPON = { Melee: "Melee weapon", Bow: "Bow", Staff: "Staff", Dagger: "Knife", Sword: "Sword", Spear: "Spear", TwoHandSword: "Two-handed sword", MerchantWeapon: "Axe, mace or sword", AxeOrMace: "Axe or mace" };
 const ELCOL = n => `var(--el-${n.toLowerCase()})`;
 
 const byId = {};
@@ -301,7 +305,7 @@ const jobKey = s => s.job.toLowerCase();
 const PAGES = [
   ["Guide", [["home", "Overview"], ["start", "Getting started"], ["growth", "Character growth"], ["world", "World and levels"]]],
   ["1st jobs", FIRST.map(k => [k, JOBS[k].name, true])],
-  ["2nd jobs", FIRST.map(k => [JOBS[k].next, JOBS[JOBS[k].next].name, true])],
+  ["2nd jobs", FIRST.filter(k => JOBS[k].next).map(k => [JOBS[k].next, JOBS[JOBS[k].next].name, true])],
   ["Reference", [["elements", "Elements"], ["items", "Items and crafting"], ["controls", "Keys and lock-on"], ["server", "Server and QoL"], ["changelog", "Changelog"]]],
 ];
 
@@ -319,7 +323,7 @@ const md = s => esc(s).replace(/\*\*(.+?)\*\*/g, "<b>$1</b>").replace(/`([^`]+)`
 /* ───────── Pages ───────── */
 
 function home() {
-  const path = FIRST.map(k => `<div class="pair">${chip(k)}<span class="arrow">Lv 40 →</span>${chip(JOBS[k].next)}</div>`).join("");
+  const path = FIRST.map(k => `<div class="pair">${chip(k)}<span class="arrow">Lv 40 →</span>${JOBS[k].next ? chip(JOBS[k].next) : "<span>(none)</span>"}</div>`).join("");
   const shots = [["lord-of-vermilion", "Wizard's Lord of Vermilion"], ["storm-gust", "Wizard's Storm Gust"], ["meteor-storm", "Wizard's Meteor Storm"], ["skill-tree-hunter", "The skill tree (Hunter)"], ["auto-blitz", "Hunter's crow on Auto Blitz"]]
     .map(([f, c]) => `<figure><img src="${SHOTS}${f}.png" alt="${c}" loading="lazy" onerror="this.parentNode.remove()"><figcaption>${c}</figcaption></figure>`).join("");
   return win(`Ragnarok RPG <span class="poring" aria-hidden="true"></span>`, `
@@ -327,7 +331,7 @@ function home() {
       <div class="copy">
         <h1>From <em>Novice</em> to Knight, in Valheim</h1>
         <p class="lede">Remember Prontera's crowded streets, the first time you said goodbye to your Novice, the hours on Poring and Fabre for one more Job Level?</p>
-        <p>Ragnarok RPG turns Valheim's survival into the RO journey: earn Job Levels by hunting, change job at Freya's altar after Eikthyr, spend skill points in an RO skill tree and take the 2nd-job test after Moder. ${W.skills.length} skills across 10 jobs, with RO's shapes, colours and sounds.</p>
+        <p>Ragnarok RPG turns Valheim's survival into the RO journey: earn Job Levels by hunting, change job at Freya's altar after Eikthyr, spend skill points in an RO skill tree and take the 2nd-job test after Moder. ${W.skills.length} skills across ${Object.values(JOBS).filter(j => j.tier).length} jobs, with RO's shapes, colours and sounds.</p>
         <div class="row">
           <a class="btn primary" href="${W.discord}" target="_blank" rel="noopener">Join the Discord</a>
           <a class="btn" href="https://thunderstore.io/c/valheim/p/OctopusRage/RagnarokRPG/" target="_blank" rel="noopener">Thunderstore</a>
@@ -365,7 +369,8 @@ function start() {
       <li><span>Each job level gives one skill point, up to Job Lv 50. Open the skill window with <code>Alt+K</code>, learn skills with +, and drag actives onto the skill bar. <code>Alt+S</code> switches keys 1–8 to skills.</span></li>
       <li><span>To change job, trade your job weapon back in at a Job Altar. Levels and skills are kept per job, and Freya keeps your old weapon for when you come back. Job weapons are bound to you; a lost one is replaced for 1 Hard antler.</span></li>
       <li><span>When <b>Moder</b> falls, a great stone <b>Valkyrie</b> rises near her altar. At 1st-job <b>Job Lv 40</b> she offers <i>Advance</i>. You keep your weapon and all 1st-job skills; the 2nd job has its own levels, points and a small bonus per level.</span></li>
-      <li><span>Changed your mind? The Valkyrie returns a 2nd job to its 1st job for <b>1 Moder trophy</b>; advancing again later is free. <b>Reset skills</b> in the skill window refunds both trees.</span></li>
+      <li><span>Changed your mind? Freya's altar or the Valkyrie returns a 2nd job to its 1st job for free; advancing again later is free. <b>Reset skills</b> in the skill window refunds both trees.</span></li>
+      <li><span><b>Mastered jobs:</b> the Valkyrie also switches you straight, from any job, to any job you have taken to <b>Job Lv 50</b> (1st or 2nd), and to the 2nd job of any 1st job at Lv 50 (after Moder). It's free, with no weapon trade-in, and a missing job weapon is given.</span></li>
     </ol>`);
 }
 
@@ -392,7 +397,7 @@ function jobPage(k, selected) {
     ["Tier", j.tier === 1 ? "1st job" : "2nd job"],
     ["Weapons", j.weapon],
     j.starter && ["Starter weapon", j.starter],
-    j.tier === 1 ? ["Advances to", `<a href="#${j.next}">${JOBS[j.next].name}</a> at Job Lv 40, after Moder`] : ["From", `<a href="#${j.from}">${JOBS[j.from].name}</a>, keeping every ${JOBS[j.from].name} skill`],
+    j.tier === 1 ? ["Advances to", j.next ? `<a href="#${j.next}">${JOBS[j.next].name}</a> at Job Lv 40, after Moder` : "None"] : ["From", `<a href="#${j.from}">${JOBS[j.from].name}</a>, keeping every ${JOBS[j.from].name} skill`],
     j.bonus && ["Job bonus", `${j.bonus} (see Job Bonus below)`],
     ["Skills", `${list.length} (${list.filter(s => s.active).length} active)`],
   ].filter(Boolean).map(([a, b]) => `<dt>${a}</dt><dd>${b}</dd>`).join("");
@@ -502,6 +507,7 @@ const BONUS = {
   hunter: [["Bow damage", G.bonusDamage, plusPct], ["Max stamina", G.hunterStamina, plus]],
   assassin: [["Knife damage", G.bonusDamage, plusPct], ["Evade chance", G.assassinEvade, plusPct]],
   priest: [["Heal power", G.priestHeal, plusPct], ["Max eitr (with a staff or mace)", G.priestEitr, plus]],
+  blacksmith: [["Axe and mace damage", G.blacksmithDamage, plusPct], ["Carry weight", G.blacksmithCarry, plus]],
 };
 
 // What else grows with job level, per job.
@@ -513,10 +519,12 @@ function levelGrowth(k) {
     mage: [`MATK +${pct(m)} per Mage job level (+${pct(m * 50)} at Lv 50).`, `Max eitr +1 per Mage job level while you hold a staff.`],
     thief: [`Job level only gives skill points. Your Knives skill still raises every skill hit.`],
     acolyte: [`MATK +${pct(a)} per Acolyte job level (+${pct(a * 50)} at Lv 50).`, `Max eitr +1 per Acolyte job level while you hold a staff or a mace.`],
+    merchant: [`Job level only gives skill points. Your Axes, Clubs and Swords skills still raise every skill hit.`],
     knight: [],
     hunter: [`Auto Blitz sends one more crow strike per 10 Hunter job levels, up to your Blitz Beat level.`],
     wizard: [`No flat bonus: instead MATK and eitr count your Mage <b>and</b> Wizard job levels together.`, `At Mage 50 + Wizard 50 that is MATK +${pct(m * 100)} and max eitr +100 over the staff's own.`],
     assassin: [],
+    blacksmith: [`Job level only gives skill points and the job bonus. Forging's chances come from the skill's level, not job level.`],
     priest: [`Max eitr counts Acolyte + Priest job levels (+1 each).`, `MATK stops growing at ${G.priestMatkCap} levels: a Priest's own levels go into heals and buffs, not damage.`],
   }[k];
 }
@@ -542,7 +550,7 @@ function jobGrowth(k) {
 }
 
 function growth() {
-  const bonusRows = ["knight", "hunter", "wizard", "assassin", "priest"].map(k => {
+  const bonusRows = ["knight", "hunter", "wizard", "assassin", "priest", "blacksmith"].map(k => {
     const txt = BONUS[k] ? BONUS[k].map(([l, v, f]) => `${l} ${f(v)}`).join(", ")
       : `MATK and eitr count Mage + Wizard job levels (up to MATK +${pct(G.matkPerLevel * 100)}, eitr +100)`;
     return `<tr><td>${chip(k)}</td><td>${txt}</td></tr>`;
@@ -611,7 +619,20 @@ function items() {
         <tr>${it("RO_MageRod", "Basic Rod")}<td>Mage, Acolyte</td><td>MATK 35, eitr +50</td></tr>
         <tr>${it("RO_ThiefKnife", "Thief's Knife")}<td>Thief, Assassin</td><td>Weaker than the Copper Knife</td></tr>
         <tr>${it("RO_AcolyteMace", "Acolyte's Mace")}<td>Acolyte, Priest</td><td>Given with the Basic Rod. Any mace gives an Acolyte eitr by its biome: 40 (Meadows) to 120 (Ashlands)</td></tr>
+        <tr>${it("RO_MerchantAxe", "Merchant's Axe")}<td>Merchant, Blacksmith</td><td>A plain axe; Merchants also fight with any mace or sword</td></tr>
       </table></div>`)
+  + win("Forging", `
+      <h2>Forging (Blacksmith)</h2>
+      <p>The Blacksmith's <a href="#skill-forging">Forging</a> skill opens a window, anywhere, that fills two slots on the weapon in hand. The <b>element slot</b> comes first: all the weapon's physical damage becomes that element. Then the <b>power slot</b>: a random stat at +1% to +5% (+1% is likeliest, +5% rarest), counted while the weapon is in hand. Every attempt uses up its materials, success or not. Resetting the last filled slot is free but breaks the weapon half the time.</p>
+      <div class="tablewrap"><table>
+        <tr><th>Slot</th><th>Material per attempt</th><th>Chance at Forging Lv 1 → 5</th></tr>
+        <tr><td><span class="el" style="background:${ELCOL("Fire")}">Fire</span></td><td>3 Surtling core</td><td rowspan="4">10% → 50%</td></tr>
+        <tr><td><span class="el" style="background:${ELCOL("Water")}">Frost</span></td><td>5 Freeze gland</td></tr>
+        <tr><td><span class="el" style="background:${ELCOL("Wind")}">Lightning</span></td><td>1 Thunder stone</td></tr>
+        <tr><td><span class="el" style="background:${ELCOL("Poison")}">Poison</span></td><td>10 Ooze</td></tr>
+        <tr><td>Power: ATK (MATK on staves), attack speed, max health, eitr or stamina</td><td>3 bars of the weapon's biome metal: Bronze (Meadows, Black Forest), Iron, Silver, Black metal, Refined eitr (Mistlands), Flametal</td><td>3% → 15%</td></tr>
+      </table></div>
+      <p class="note">On a staff the element does nothing (it still has to be filled first). A forged weapon glows its element's colour in hand, for everyone. Gem-infused Ashlands weapons forge too: the gem's own element and effect stay, on top of the forged one.</p>`)
   + win("Staffs", `
       <h2>Staffs</h2>
       <p>Mage, Wizard, Acolyte and Priest spells take MATK and max eitr from the staff in hand. Valheim's own staffs work too.</p>
@@ -647,7 +668,7 @@ function controls() {
   const t = rows => `<div class="tablewrap"><table>${rows.map(([a, b]) => `<tr><td style="white-space:nowrap"><code>${a.split(" + ").join("</code> + <code>")}</code></td><td>${b}</td></tr>`).join("")}</table></div>`;
   return win("Keys", `<h2>Keyboard</h2>${t([
       ["Alt+K", "Job and skill window: learn (+) or lower (−) skills, drag skills onto the skill bar"],
-      ["Alt+A", "Status window: vitals, attack, MATK, armor, resistances, active effects"],
+      ["Alt+A", "Status window: vitals, attack, MATK, armor, resistances, active effects; the Jobs tab shows every job's level and what it needs to advance"],
       ["Alt+S", "Keys 1–8 cast skills (press again for the next skill stack)"],
       ["Alt+E", "Keys 1–8 back to the item hotbar"],
       ["Alt+F", "Lock on, or let go"]])}
