@@ -586,8 +586,11 @@ function growth() {
     <p class="note">Acolyte and Priest: +${pct(G.acolyteMatkPerLevel)} per job level instead, using Blood Magic, and the job level stops counting at ${G.priestMatkCap}. Wizards count Mage + Wizard levels. Example: a Frost Crystal Staff (MATK 75) at Elemental Magic 50 and Mage Job Lv 50 gives 75 × 0.7 × ${(1 + G.matkPerLevel * 50).toFixed(2)} ≈ ${n0(75 * 0.7 * (1 + G.matkPerLevel * 50))} MATK.</p>`)
   + win("Job Bonus", `
     <h2>2nd-job bonus</h2>
-    <p>Like RO's job bonus stats, every 2nd-job level adds a little to the job's strength, evenly from Job Lv 1 up to the full amount at Job Lv ${G.secondMax}. It only counts while you are that 2nd job.</p>
+    <p>Like RO's job bonus stats, every 2nd-job level adds a little to the job's strength, evenly from Job Lv 1 up to the full amount at Job Lv ${G.secondMax}. It counts while you are that 2nd job.</p>
     <div class="tablewrap"><table><tr><th>Job</th><th>At Job Lv ${G.secondMax}</th></tr>${bonusRows}</table></div>
+    <h3>Mastered jobs keep giving</h3>
+    <p>Take a job to <b>Job Lv ${G.secondMax}</b> and its bonuses stay with your character in every job, and every mastered job counts. Master Knight, then play Archer: you keep melee +15% and health +50. Mastering Priest gives an Acolyte its eitr bonus too.</p>
+    <p>Mastered magic jobs also lend their level bonus to any job: each mastered Mage or Wizard gives MATK +${pct(G.matkPerLevel * G.secondMax)} and eitr +${G.secondMax} with a staff; a mastered Acolyte gives MATK +${pct(G.acolyteMatkPerLevel * G.secondMax)} with a staff and eitr +${G.secondMax} with a staff or mace (a mastered Priest another eitr +${G.secondMax}, plus its bonus). Skills are not inherited, only these stats.</p>
     <p class="note">Open a job's page for its bonus at every level. The status window (<code>Alt+A</code>) shows yours right now.</p>`);
 }
 
