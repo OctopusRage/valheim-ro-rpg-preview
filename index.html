@@ -387,7 +387,12 @@ function world() {
   + win("World Scaling", `
     <h2>A tougher world</h2>
     <p>Once Eikthyr is defeated, every creature has <b>1.3×</b> health and deals <b>1.3×</b> damage. From the Plains on, creatures have <b>1.7×</b> health and resist <b>30%</b> of every element but Neutral on skill hits.</p>
-    <p class="note">Server owners can turn this off with <code>[Server] MobScaling = false</code>. See <a href="#server">Server and QoL</a>.</p>`);
+    <p>The night is busier too: twice as many <b>Skeletons</b> in the Black Forest (and some by day), and three times the <b>Wraiths</b> in the Swamp.</p>
+    <p class="note">Server owners can turn this off with <code>[Server] MobScaling = false</code>. See <a href="#server">Server and QoL</a>.</p>`)
+  + win("RO Monsters", `
+    <h2>Monsters from Rune-Midgard</h2>
+    <p><b>Porings</b> hop around the Meadows and <b>Poison Spores</b> lurk in the Black Forest, among Valheim's own creatures.</p>
+`);
 }
 
 function jobPage(k, selected) {
@@ -473,7 +478,7 @@ function showSkill(id, lv, scroll) {
   const stats = [
     at("eitr") && ["Eitr", fmt(at("eitr"))],
     at("stamina") && ["Stamina", fmt(at("stamina"))],
-    at("staminaSwings") && ["Stamina", fmt(at("staminaSwings")) + "× swing"],
+    at("staminaSwings") && ["Stamina", fmt(at("staminaSwings")) + (s.weapon === "Bow" ? "× full draw" : "× swing")],
     at("cooldown") && ["Cooldown", fmt(at("cooldown")) + " s"],
     at("delay") && ["After-cast", fmt(at("delay")) + " s"],
     s.weapon !== "None" && ["Needs", WEAPON[s.weapon] || s.weapon],
@@ -599,7 +604,7 @@ function elements() {
   const cls = v => v === 0 ? "v-0" : v < 100 ? "v-lo" : v > 100 ? "v-hi" : "";
   const head = `<tr><th class="rowh">Attack ↓ / Target →</th>${E.names.map(n => `<th><span class="el" style="background:${ELCOL(n)}">${n}</span></th>`).join("")}</tr>`;
   const rows = E.table.map((r, i) => `<tr><th class="rowh"><span class="el" style="background:${ELCOL(E.names[i])}">${E.names[i]}</span></th>${r.map(v => `<td class="${cls(v)}">${v}%</td>`).join("")}</tr>`).join("");
-  const pretty = { gd_king: "The Elder", Dragon: "Moder", GoblinKing: "Yagluth", SeekerQueen: "The Queen", Fader: "Fader", Fenring_Cultist: "Cultist", BlobTar: "Growth", StoneGolem: "Stone Golem", RO_Poring: "Poring", Charred: "Charred", Hatchling: "Drake", Blob: "Blob", Gjall: "Gjall" };
+  const pretty = { gd_king: "The Elder", Dragon: "Moder", GoblinKing: "Yagluth", SeekerQueen: "The Queen", Fader: "Fader", Fenring_Cultist: "Cultist", BlobTar: "Growth", StoneGolem: "Stone Golem", RO_Poring: "Poring", RO_PoisonSpore: "Poison Spore", Charred: "Charred", Hatchling: "Drake", Blob: "Blob", Gjall: "Gjall" };
   const creatures = E.creatures.map(([p, e]) => `<span>${esc(pretty[p] || p)}<span class="el" style="background:${ELCOL(e)}">${e}</span></span>`).join("");
   return win("Element Table", `
       <h2>RO's element table</h2>
@@ -697,12 +702,14 @@ function controls() {
 
 function server() {
   return win("Server Settings", `<h2>Server settings</h2>
-      <p>In <code>BepInEx/config/ragnarokjobs.valheim.cfg</code> on the server. Admins can change them in game, and every player gets the server's values.</p>
+      <p>Every setting of the mod, server ones included, is in <b>Ragnarok RPG</b> on the main menu, under Start game. They apply to the worlds you start or host. A dedicated server reads them from <code>BepInEx/config/ragnarokjobs.valheim.cfg</code>. In game they're under <b>Esc → Mod Settings</b> at any time (server ones by admins only), and every player gets the server's values.</p>
       <div class="tablewrap"><table>
         <tr><th>Setting</th><th>What</th></tr>
         <tr><td><code>[Server] MobScaling</code></td><td><code>false</code> keeps vanilla creatures (no 1.3× / 1.7× health)</td></tr>
         <tr><td><code>[Server] JobExpRate</code></td><td>Multiplies job EXP from kills (default 1, from 0.1 to 10)</td></tr>
         <tr><td><code>[Server] PoringDensity</code></td><td>Porings in the Meadows, × the Boars (default 5, up to 10). <code>0</code>: no Porings</td></tr>
+        <tr><td><code>[Server] PoisonSporeDensity</code></td><td>Poison Spores in the Black Forest, × the Greydwarfs (default 2, up to 10). <code>0</code>: no Poison Spores</td></tr>
+        <tr><td><code>[Server] RoMonsters</code></td><td><code>false</code>: no RO monsters spawn (Porings, Poison Spores and the RO monsters to come). Valheim's creatures stay</td></tr>
         <tr><td><code>[QoL] StackSizeMultiplier</code></td><td>Stacks up to 5×</td></tr>
         <tr><td><code>[QoL] NoFoodDegradation</code></td><td>Full food stats until it runs out</td></tr>
         <tr><td><code>[QoL] AutoStoreProduce</code></td><td>Smelters, kilns, windmills, fermenters, beehives, cooking stations… put what they make into a nearby chest</td></tr>
