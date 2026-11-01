@@ -125,6 +125,15 @@ code { font: 13px/1.4 ui-monospace, "Cascadia Mono", Consolas, monospace; backgr
 .hero h1 em { font-style: normal; color: var(--gold); }
 .hero .lede { font-size: 14px; color: var(--muted); font-style: italic; }
 .hero .copy { display: grid; gap: 12px; min-width: 0; }
+/* With a release banner: the banner across the top (its own tagline at its foot, left clear), fading into the window */
+.hero.art .body { display: block; padding: 0; }
+.hero-art { position: relative; }
+.hero-art img { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; }
+.hero-art::after { content: ""; position: absolute; inset: auto 0 0 0; height: 5%; background: linear-gradient(180deg, transparent, var(--win)); pointer-events: none; }
+.hero.art .copy { position: relative; padding: 14px 26px 24px; }
+.hero .head { display: flex; align-items: center; gap: 16px; }
+.hero .head img { width: 72px; height: 72px; border-radius: 10px; border: 1px solid var(--edge); box-shadow: var(--shadow); flex: none; }
+.btn.news { border-color: var(--gold); color: var(--gold); font-weight: bold; }
 .ver { font: bold 12px/1 var(--body); background: var(--gold); color: var(--win); padding: 4px 6px; border-radius: 3px; vertical-align: middle; }
 
 /* The poring hopping along the hero's title bar */
@@ -219,9 +228,6 @@ td.num, th.num { text-align: right; }
 .log section:last-child { border-bottom: 0; }
 .log h3 .d { font: normal 13px var(--body); color: var(--muted); margin-left: 8px; }
 .banner { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 4px; border: 1px solid var(--edge); }
-.news { display: grid; gap: 6px; margin-top: 14px; }
-.news a { color: inherit; text-decoration: none; }
-.news span { font-size: 14px; color: var(--muted); }
 
 .shots { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 10px; }
 .shots figure { margin: 0; display: grid; gap: 4px; }
@@ -242,6 +248,8 @@ footer { max-width: 1180px; margin: 24px auto 0; text-align: center; font-size: 
   .menu nav a.sub { padding-left: 6px; }
   .hero .body { grid-template-columns: minmax(0, 1fr); }
   .hero img.logo { width: 96px; height: 96px; }
+  .hero.art .copy { padding: 10px 16px 18px; }
+  .hero .head img { width: 52px; height: 52px; }
   .path { grid-template-columns: minmax(0, 1fr); }
   .path .novice { grid-row: auto; justify-items: start; }
   .path .tier { display: none; }
@@ -330,10 +338,14 @@ function home() {
   const path = FIRST.map(k => `<div class="pair">${chip(k)}<span class="arrow">Lv 40 →</span>${JOBS[k].next ? chip(JOBS[k].next) : "<span>(none)</span>"}</div>`).join("");
   const shots = [["lord-of-vermilion", "Wizard's Lord of Vermilion"], ["storm-gust", "Wizard's Storm Gust"], ["meteor-storm", "Wizard's Meteor Storm"], ["skill-tree-hunter", "The skill tree (Hunter)"], ["auto-blitz", "Hunter's crow on Auto Blitz"]]
     .map(([f, c]) => `<figure><img src="${SHOTS}${f}.png" alt="${c}" loading="lazy" onerror="this.parentNode.remove()"><figcaption>${c}</figcaption></figure>`).join("");
+  // The latest release's banner heads the page (tools/wiki/build.py copies it); without one, the logo beside the text.
+  const art = (W.banners || []).includes(W.version);
+  const title = `<h1>From <em>Novice</em> to Knight, in Valheim</h1>`;
+  const logo = `<img class="logo" src="icons/logo.png" alt="Ragnarök × Valheim logo with a Poring">`;
   return win(`Ragnarok RPG <span class="poring" aria-hidden="true"></span>`, `
-      <img class="logo" src="icons/logo.png" alt="Ragnarök × Valheim logo with a Poring">
+      ${art ? `<div class="hero-art"><img src="banners/${esc(W.version)}.jpg" alt="Ragnarok RPG ${esc(W.version)} release banner"></div>` : logo}
       <div class="copy">
-        <h1>From <em>Novice</em> to Knight, in Valheim</h1>
+        ${art ? `<div class="head">${logo}${title}</div>` : title}
         <p class="lede">Remember Prontera's crowded streets, the first time you said goodbye to your Novice, the hours on Poring and Fabre for one more Job Level?</p>
         <p>Ragnarok RPG turns Valheim's survival into the RO journey: earn Job Levels by hunting, change job at Freya's altar after Eikthyr, spend skill points in an RO skill tree and take the 2nd-job test after Moder. ${W.skills.length} skills across ${Object.values(JOBS).filter(j => j.tier).length} jobs, with RO's shapes, colours and sounds.</p>
         <div class="row">
@@ -341,10 +353,9 @@ function home() {
           <a class="btn" href="https://thunderstore.io/c/valheim/p/OctopusRage/RagnarokRPG/" target="_blank" rel="noopener">Thunderstore</a>
           <a class="btn" href="https://ko-fi.com/octopusrage" target="_blank" rel="noopener">☕ Support on Ko-fi</a>
           <a class="btn" href="#start">Getting started</a>
-          <span class="ver">v${esc(W.version)}</span>
+          <a class="btn news" href="#changelog">What's new in ${esc(W.version)} →</a>
         </div>
-        ${(W.banners || []).includes(W.version) ? `<a class="news" href="#changelog"><img class="banner" src="banners/${esc(W.version)}.jpg" alt="Ragnarok RPG ${esc(W.version)} release banner"><span>What's new in ${esc(W.version)} →</span></a>` : ""}
-      </div>`, "hero")
+      </div>`, art ? "hero art" : "hero")
   + win("Job Change", `
       <h2>Job tree</h2>
       <div class="path">
