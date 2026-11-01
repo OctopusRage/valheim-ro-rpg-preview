@@ -274,7 +274,7 @@ const JOBS = {
   archer: { name: "Archer", tier: 1, next: "hunter", weapon: "Bows and crossbows", starter: "Archer's Bow",
     blurb: "Double Strafe and Arrow Shower from range. Improve Concentration makes the bow draw much faster as your job level climbs; Owl's Eye and Vulture's Eye sharpen every shot." },
   mage: { name: "Mage", tier: 1, next: "wizard", weapon: "A staff (sets MATK and max eitr)", starter: "Basic Rod",
-    blurb: "Bolts of every element, Soul Strike, Napalm Beat, Frost Diver to freeze, Fire Ball, Fire Wall and Thunderstorm. Spells need a staff in hand, reach 10 m, then fizzle out." },
+    blurb: "Bolts of every element, Soul Strike, Napalm Beat, Frost Diver to freeze, Fire Ball, Fire Wall and Thunderstorm. Spells need a staff in hand, reach 10 m, then fizzle out. Bolts fall from the sky on the enemy you aim at, one per level, and every one hits." },
   thief: { name: "Thief", tier: 1, next: "assassin", weapon: "Knives", starter: "Thief's Knife",
     blurb: "Fast and hard to hit. Double Attack, Envenom's poison, Steal, Hiding and Improve Dodge; Detoxify for the swamp." },
   acolyte: { name: "Acolyte", tier: 1, next: "priest", weapon: "A staff or a mace", starter: "Basic Rod and Acolyte's Mace",
@@ -507,31 +507,38 @@ const n0 = v => Math.round(v).toLocaleString("en-US");
 const plusPct = v => "+" + pct(v);
 const plus = v => "+" + (Math.round(v * 10) / 10);
 
-// 2nd-job bonus at 2nd-job Lv 50; it grows evenly from Lv 1 (1/50 of it) to Lv 50.
+// Job bonus at Job Lv 50 (1st and 2nd jobs); it grows evenly from Lv 1 (1/50 of it) to Lv 50.
+const JB = G.jobBonuses;
 const BONUS = {
+  swordman: [["Armour", JB.SwordmanArmor, plus], ["Max health", JB.SwordmanHealth, plus]],
+  archer: [["Bow damage", JB.ArcherBowDamage, plusPct], ["Max stamina", JB.ArcherStamina, plus], ["Max health", JB.ArcherHealth, plus]],
+  thief: [["Attack speed (every weapon; knife skills too)", JB.ThiefSpeed, plusPct], ["Evade chance", JB.ThiefEvade, plusPct], ["Max health", JB.ThiefHealth, plus]],
+  merchant: [["Axe and mace damage", JB.MerchantDamage, plusPct], ["Carry weight", JB.MerchantCarry, plus], ["Max health", JB.MerchantHealth, plus]],
+  acolyte: [["Heal power", JB.AcolyteHeal, plusPct], ["Max health", JB.AcolyteHealth, plus]],
   knight: [["Melee damage (any melee weapon)", G.bonusDamage, plusPct], ["Max health", G.knightHealth, plus]],
-  hunter: [["Bow damage", G.bonusDamage, plusPct], ["Max stamina", G.hunterStamina, plus]],
-  assassin: [["Knife damage", G.assassinDamage, plusPct], ["Knife attack and knife skill speed (after-cast delay shorter too)", G.assassinSpeed, plusPct], ["Evade chance", G.assassinEvade, plusPct]],
-  priest: [["Heal power", G.priestHeal, plusPct], ["Max eitr (with a staff or mace)", G.priestEitr, plus]],
-  blacksmith: [["Axe and mace damage", G.blacksmithDamage, plusPct], ["Carry weight", G.blacksmithCarry, plus]],
+  hunter: [["Bow damage", G.bonusDamage, plusPct], ["Max stamina", G.hunterStamina, plus], ["Max health", JB.HunterHealth, plus]],
+  assassin: [["Knife damage", G.assassinDamage, plusPct], ["Attack speed (every weapon; knife skills too, with a shorter after-cast delay)", G.assassinSpeed, plusPct], ["Evade chance", G.assassinEvade, plusPct], ["Max health", JB.AssassinHealth, plus]],
+  wizard: [["MATK", JB.WizardMatk, plusPct], ["Max health", JB.WizardHealth, plus]],
+  priest: [["Heal power", G.priestHeal, plusPct], ["Max eitr (with a staff or mace)", G.priestEitr, plus], ["Max health", JB.PriestHealth, plus]],
+  blacksmith: [["Axe and mace damage", G.blacksmithDamage, plusPct], ["Carry weight", G.blacksmithCarry, plus], ["Max health", JB.BlacksmithHealth, plus]],
 };
 
 // What else grows with job level, per job.
 function levelGrowth(k) {
-  const m = G.matkPerLevel, a = G.acolyteMatkPerLevel;
+  const m = G.mageMatkPerLevel, w = G.wizardMatkPerLevel, a = G.acolyteMatkPerLevel;
   return {
-    swordman: [`Job level only gives skill points. Your Swords, Spears and other Valheim weapon skills still raise every skill hit.`],
-    archer: [`Improve Concentration's faster bow draw scales with Archer job level: up to ${pct(G.concentrationDrawCut)} off the draw time at Job Lv 50 and skill Lv 10.`],
-    mage: [`MATK +${pct(m)} per Mage job level (+${pct(m * 50)} at Lv 50).`, `Max eitr +1 per Mage job level while you hold a staff.`],
-    thief: [`Job level only gives skill points. Your Knives skill still raises every skill hit.`],
-    acolyte: [`MATK +${pct(a)} per Acolyte job level (+${pct(a * 50)} at Lv 50).`, `Max eitr +1 per Acolyte job level while you hold a staff or a mace.`],
-    merchant: [`Job level only gives skill points. Your Axes, Clubs and Swords skills still raise every skill hit.`],
-    knight: [],
-    hunter: [`Auto Blitz sends one more crow strike per 10 Hunter job levels, up to your Blitz Beat level.`],
-    wizard: [`No flat bonus: instead MATK and eitr count your Mage <b>and</b> Wizard job levels together.`, `At Mage 50 + Wizard 50 that is MATK +${pct(m * 100)} and max eitr +100 over the staff's own.`],
-    assassin: [],
-    blacksmith: [`Job level only gives skill points and the job bonus. Forging's chances come from the skill's level, not job level.`],
-    priest: [`Max eitr counts Acolyte + Priest job levels (+1 each).`, `MATK stops growing at ${G.priestMatkCap} levels: a Priest's own levels go into heals and buffs, not damage.`],
+    swordman: [`The Swordman job bonus below. Your Swords, Spears and other Valheim weapon skills still raise every skill hit.`],
+    archer: [`The Archer job bonus below.`, `Improve Concentration's faster bow draw scales with Archer job level: up to ${pct(G.concentrationDrawCut)} off the draw time at Job Lv 50 and skill Lv 10.`],
+    mage: [`MATK +${pct(m)} per Mage job level (+${pct(m * 50)} at Lv 50).`, `Max eitr +1 per Mage job level while you hold a staff.`, `No health bonus: on purpose.`],
+    thief: [`The Thief job bonus below. Your Knives skill still raises every skill hit.`],
+    acolyte: [`MATK +${pct(a)} per Acolyte job level (+${pct(a * 50)} at Lv 50).`, `Max eitr +1 per Acolyte job level while you hold a staff or a mace.`, `And the Acolyte job bonus below.`],
+    merchant: [`The Merchant job bonus below. Your Axes, Clubs and Swords skills still raise every skill hit.`],
+    knight: [`Keeps the Swordman's bonus too.`],
+    hunter: [`Keeps the Archer's bonus too.`, `Auto Blitz sends one more crow strike per 10 Hunter job levels, up to your Blitz Beat level.`],
+    wizard: [`MATK and eitr count your Mage <b>and</b> Wizard job levels: MATK +${pct(w)} per Wizard level on top of the Mage's +${pct(m)} each, eitr +1 each.`, `At Mage 50 + Wizard 50, with the bonus below: MATK +${pct(m * 50 + w * 50 + JB.WizardMatk)} and max eitr +100 over the staff's own.`],
+    assassin: [`Keeps the Thief's bonus too: the two attack speeds add up.`],
+    blacksmith: [`Keeps the Merchant's bonus too.`, `Forging's chances come from the skill's level, not job level.`],
+    priest: [`Keeps the Acolyte's bonus too.`, `Max eitr counts Acolyte + Priest job levels (+1 each).`, `MATK stops growing at ${G.priestMatkCap} levels: a Priest's own levels go into heals and buffs, not damage.`],
   }[k];
 }
 
@@ -556,11 +563,10 @@ function jobGrowth(k) {
 }
 
 function growth() {
-  const bonusRows = ["knight", "hunter", "wizard", "assassin", "priest", "blacksmith"].map(k => {
-    const txt = BONUS[k] ? BONUS[k].map(([l, v, f]) => `${l} ${f(v)}`).join(", ")
-      : `MATK and eitr count Mage + Wizard job levels (up to MATK +${pct(G.matkPerLevel * 100)}, eitr +100)`;
-    return `<tr><td>${chip(k)}</td><td>${txt}</td></tr>`;
-  }).join("");
+  const row = k => `<tr><td>${chip(k)}</td><td>${BONUS[k].map(([l, v, f]) => `${l} ${f(v)}`).join(", ")}</td></tr>`;
+  const firstRows = ["swordman", "archer", "thief", "merchant", "acolyte"].map(row).join("")
+    + `<tr><td>${chip("mage")}</td><td>MATK +${pct(G.mageMatkPerLevel * 50)} and eitr +50 with a staff (per level, above)</td></tr>`;
+  const bonusRows = ["knight", "hunter", "wizard", "assassin", "priest", "blacksmith"].map(row).join("");
   return win("Character Growth", `
     <h2>How your character grows</h2>
     <p>Valheim's own progression stays: skills level by use, gear comes from the next biome, food sets your health and stamina. The mod adds RO's <b>job level</b> on top. All three feed your skills.</p>
@@ -588,15 +594,20 @@ function growth() {
   + win("MATK", `
     <h2>MATK</h2>
     <p>Spells, Heal and Holy Light scale with MATK, worked out from the staff in hand:</p>
-    <div class="formula">MATK = staff MATK × (0.4 + 0.6 × magic skill ÷ 100) × (1 + ${pct(G.matkPerLevel)} × job level) + Blessing</div>
-    <p class="note">Acolyte and Priest: +${pct(G.acolyteMatkPerLevel)} per job level instead, using Blood Magic, and the job level stops counting at ${G.priestMatkCap}. Wizards count Mage + Wizard levels. Example: a Frost Crystal Staff (MATK 75) at Elemental Magic 50 and Mage Job Lv 50 gives 75 × 0.7 × ${(1 + G.matkPerLevel * 50).toFixed(2)} ≈ ${n0(75 * 0.7 * (1 + G.matkPerLevel * 50))} MATK.</p>`)
+    <div class="formula">MATK = staff MATK × (0.4 + 0.6 × magic skill ÷ 100) × (1 + ${pct(G.mageMatkPerLevel)} × Mage level + ${pct(G.wizardMatkPerLevel)} × Wizard level + Wizard bonus) + Blessing</div>
+    <p class="note">The Wizard bonus grows to +${pct(JB.WizardMatk)} at Wizard Job Lv 50. Acolyte and Priest: +${pct(G.acolyteMatkPerLevel)} per Acolyte job level instead, using Blood Magic, and the job level stops counting at ${G.priestMatkCap}. Other jobs holding a staff: +${pct(G.wizardMatkPerLevel)} per own job level. Example: a Frost Crystal Staff (MATK 75) at Elemental Magic 50 and Mage Job Lv 50 gives 75 × 0.7 × ${(1 + G.mageMatkPerLevel * 50).toFixed(2)} ≈ ${n0(75 * 0.7 * (1 + G.mageMatkPerLevel * 50))} MATK.</p>`)
   + win("Job Bonus", `
-    <h2>2nd-job bonus</h2>
-    <p>Like RO's job bonus stats, every 2nd-job level adds a little to the job's strength, evenly from Job Lv 1 up to the full amount at Job Lv ${G.secondMax}. It counts while you are that 2nd job.</p>
+    <h2>Job bonus</h2>
+    <p>Like RO's job bonus stats, every job level adds a little to the job's strength, evenly from Job Lv 1 up to the full amount at Job Lv ${G.secondMax}.</p>
+    <h3>1st jobs</h3>
+    <p>Counts in the 1st job, and keeps counting in its 2nd job (a Knight keeps the Swordman's).</p>
+    <div class="tablewrap"><table><tr><th>Job</th><th>At Job Lv ${G.firstMax}</th></tr>${firstRows}</table></div>
+    <h3>2nd jobs</h3>
+    <p>Counts while you are that 2nd job, on top of its 1st job's bonus.</p>
     <div class="tablewrap"><table><tr><th>Job</th><th>At Job Lv ${G.secondMax}</th></tr>${bonusRows}</table></div>
     <h3>Mastered jobs keep giving</h3>
-    <p>Take a job to <b>Job Lv ${G.secondMax}</b> and its bonuses stay with your character in every job, and every mastered job counts. Master Knight, then play Archer: you keep melee +15% and health +50. Mastering Priest gives an Acolyte its eitr bonus too.</p>
-    <p>Mastered magic jobs also lend their level bonus to any job: each mastered Mage or Wizard gives MATK +${pct(G.matkPerLevel * G.secondMax)} and eitr +${G.secondMax} with a staff; a mastered Acolyte gives MATK +${pct(G.acolyteMatkPerLevel * G.secondMax)} with a staff and eitr +${G.secondMax} with a staff or mace (a mastered Priest another eitr +${G.secondMax}, plus its bonus). Skills are not inherited, only these stats.</p>
+    <p>Take a <b>2nd job</b> to <b>Job Lv ${G.secondMax}</b> and its bonus, and its 1st job's, stay with your character in every job, and every mastered 2nd job counts. Master Knight, then play Archer: you keep melee +15%, health +50 and the Swordman's armour and health. A 1st job at Job Lv ${G.firstMax} alone passes nothing on.</p>
+    <p>The magic families lend their level bonus the same way, only from a mastered Wizard or Priest: a mastered Wizard gives any job MATK +${pct(G.mageMatkPerLevel * 50 + G.wizardMatkPerLevel * 50 + JB.WizardMatk)} and eitr +100 with a staff; a mastered Priest gives MATK +${pct(G.acolyteMatkPerLevel * 50)} with a staff and eitr +100 with a staff or mace, plus its bonus. Skills are not inherited, only these stats.</p>
     <p class="note">Open a job's page for its bonus at every level. The status window (<code>Alt+A</code>) shows yours right now.</p>`);
 }
 
@@ -645,6 +656,7 @@ function items() {
   + win("Staffs", `
       <h2>Staffs</h2>
       <p>Mage, Wizard, Acolyte and Priest spells take MATK and max eitr from the staff in hand. Valheim's own staffs work too.</p>
+      <p>Every MATK staff's left-click shoots one small sparkling ball: 60% MATK, Neutral, and half of that splashes onto every other enemy within 2.5 m. A shot costs eitr by the staff's tier (ours 6 to 14, Mistlands staffs 16, Ashlands 18). Valheim's staffs shoot it too while you hold them, and boost their element's spells: Staff of Embers Fire +5%, Staff of Frost Water +5%, Dundr Wind +5%, Staff of Fracturing Earth +5%, ThunderBlood Wind +7%.</p>
       <div class="tablewrap"><table>
         <tr><th></th><th>Staff</th><th>MATK</th><th>Eitr</th><th>Station</th><th>Recipe</th></tr>
         <tr>${it("RO_StaffGreydwarf", "Greydwarf Staff")}<td>45</td><td>60</td><td>Workbench Lv 2</td><td>10 Fine wood, 8 Greydwarf eye, 10 Resin</td></tr>
@@ -669,6 +681,7 @@ function items() {
         <tr>${it("RO_HuntersTrap", "Hunter's Trap")}<td>Used up by every Hunter trap skill</td><td>Workbench: 1 Wood, 1 Resin</td></tr>
         <tr>${it("RO_HuntersCrow", "Hunter's Crow")}<td>Called with Crow Mastery; circles above you with Hugin's look</td><td>Skill</td></tr>
         <tr>${it("RO_TwinknivesNaught", "Twinknives of Naught")}<td>Ashlands dual knives for the Assassin; gem-infusable like Nidhögg (Bleeding, Thundering, Primal)</td><td>Black Forge Lv 3: 12 Flametal, 3 Charred bone, 2 Asksvin hide</td></tr>
+        <tr><td></td><td><b>DPS Dummy</b></td><td>A T.W.I.G. that can't die and shows total damage, DPS and the last hit to everyone nearby</td><td>Hammer, Misc tab, near a workbench: the T.W.I.G.'s own cost</td></tr>
         <tr>${it("RO_Raincoat", "Raincoat")}<td>While you wear it you don't get Wet</td><td>Workbench Lv 3: 4 Deer hide, 8 Leather scraps, 12 Resin</td></tr>
       </table></div>`);
 }
