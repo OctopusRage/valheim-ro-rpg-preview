@@ -120,7 +120,7 @@ code { font: 13px/1.4 ui-monospace, "Cascadia Mono", Consolas, monospace; backgr
 
 /* Hero */
 .hero .body { grid-template-columns: auto minmax(0, 1fr); gap: 22px; align-items: center; padding: 22px; }
-.hero img.logo { width: 150px; height: 150px; border-radius: 10px; border: 1px solid var(--edge); }
+.hero img.logo { width: 150px; height: 150px; border-radius: 10px; border: 1px solid var(--edge); align-self: start; }
 .hero h1 { font-size: clamp(28px, 5vw, 42px); font-weight: 800; }
 .hero h1 em { font-style: normal; color: var(--gold); }
 .hero .lede { font-size: 14px; color: var(--muted); font-style: italic; }
@@ -218,6 +218,10 @@ td.num, th.num { text-align: right; }
 .log section { display: grid; gap: 4px; padding-bottom: 14px; border-bottom: 1px dashed var(--edge); }
 .log section:last-child { border-bottom: 0; }
 .log h3 .d { font: normal 13px var(--body); color: var(--muted); margin-left: 8px; }
+.banner { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 4px; border: 1px solid var(--edge); }
+.news { display: grid; gap: 6px; margin-top: 14px; }
+.news a { color: inherit; text-decoration: none; }
+.news span { font-size: 14px; color: var(--muted); }
 
 .shots { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 10px; }
 .shots figure { margin: 0; display: grid; gap: 4px; }
@@ -339,6 +343,7 @@ function home() {
           <a class="btn" href="#start">Getting started</a>
           <span class="ver">v${esc(W.version)}</span>
         </div>
+        ${(W.banners || []).includes(W.version) ? `<a class="news" href="#changelog"><img class="banner" src="banners/${esc(W.version)}.jpg" alt="Ragnarok RPG ${esc(W.version)} release banner"><span>What's new in ${esc(W.version)} →</span></a>` : ""}
       </div>`, "hero")
   + win("Job Change", `
       <h2>Job tree</h2>
@@ -772,7 +777,12 @@ function changelog() {
   const close = () => { while (stack.length) { out.push("</li></ul>"); stack.pop(); } };
   for (const line of W.changelog.split("\n")) {
     const h = line.match(/^## (\S+)(?: \((.+)\))?/);
-    if (h) { close(); if (sec) out.push("</section>"); sec = h[1]; out.push(`<section><h3>${esc(h[1])}<span class="d">${esc(h[2] || "")}</span></h3>`); continue; }
+    if (h) {
+      close(); if (sec) out.push("</section>"); sec = h[1];
+      out.push(`<section><h3>${esc(h[1])}<span class="d">${esc(h[2] || "")}</span></h3>`);
+      if ((W.banners || []).includes(sec)) out.push(`<img class="banner" src="banners/${esc(sec)}.jpg" alt="Ragnarok RPG ${esc(sec)} release banner" loading="lazy">`);
+      continue;
+    }
     if (!sec) continue;
     const b = line.match(/^(\s*)- (.*)/);
     if (b) {
