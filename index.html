@@ -144,10 +144,14 @@ code { font: 13px/1.4 ui-monospace, "Cascadia Mono", Consolas, monospace; backgr
 @media (prefers-reduced-motion: reduce) { .poring { animation: none; } }
 
 /* Job path */
-.path { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 6px 14px; align-items: center; }
+/* One grid for the whole tree (Novice | 1st job | arrow | 2nd job), so every row's arrow and 2nd job line up */
+.path { display: grid; grid-template-columns: auto auto auto minmax(0, 1fr); gap: 6px 12px; align-items: center; justify-items: start; }
+.path .tier { justify-self: center; margin-right: 18px; }
+.path .tier.next { grid-column: 2 / -1; justify-self: start; margin-right: 0; }
 .path .tier { font: 12px/1.2 var(--body); color: var(--muted); text-align: center; }
-.path .novice { grid-row: 2 / span 5; display: grid; justify-items: center; gap: 4px; }
-.path .pair { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.path .novice { grid-column: 1; grid-row: 2 / span var(--rows, 6); display: grid; justify-items: center; gap: 4px; justify-self: center; margin-right: 18px; }
+.path .pair { display: contents; }
+.path .pair > :first-child { grid-column: 2; }
 .path .arrow { color: var(--muted); font: 13px var(--body); white-space: nowrap; }
 .jobchip { display: inline-flex; align-items: center; gap: 6px; padding: 3px 9px 3px 4px; border: 1px solid var(--edge); border-radius: 5px; background: var(--win-alt); color: var(--ink); text-decoration: none; font-weight: bold; white-space: nowrap; }
 .jobchip:hover { border-color: var(--title-b); background: var(--sel); }
@@ -251,7 +255,8 @@ footer { max-width: 1180px; margin: 24px auto 0; text-align: center; font-size: 
   .hero.art .copy { padding: 10px 16px 18px; }
   .hero .head img { width: 52px; height: 52px; }
   .path { grid-template-columns: minmax(0, 1fr); }
-  .path .novice { grid-row: auto; justify-items: start; }
+  .path .novice { grid-row: auto; justify-items: start; justify-self: start; margin: 0; }
+  .path .pair { display: flex; align-items: center; gap: 10px; min-width: 0; }
   .path .tier { display: none; }
   .path .pair { flex-wrap: wrap; }
 }
@@ -359,8 +364,8 @@ function home() {
       </div>`, art ? "hero art" : "hero")
   + win("Job Change", `
       <h2>Job tree</h2>
-      <div class="path">
-        <div class="tier">Job Lv 10</div><div class="tier">1st job, then 2nd job after Moder</div>
+      <div class="path" style="--rows: ${FIRST.length}">
+        <div class="tier">Job Lv 10</div><div class="tier next">1st job, then 2nd job after Moder</div>
         <div class="novice">${chip("novice")}<span class="fork">after Eikthyr →</span></div>
         ${path}
       </div>
