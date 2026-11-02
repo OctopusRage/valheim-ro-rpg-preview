@@ -338,12 +338,13 @@ function home() {
   const path = FIRST.map(k => `<div class="pair">${chip(k)}<span class="arrow">Lv 40 →</span>${JOBS[k].next ? chip(JOBS[k].next) : "<span>(none)</span>"}</div>`).join("");
   const shots = [["lord-of-vermilion", "Wizard's Lord of Vermilion"], ["storm-gust", "Wizard's Storm Gust"], ["meteor-storm", "Wizard's Meteor Storm"], ["skill-tree-hunter", "The skill tree (Hunter)"], ["auto-blitz", "Hunter's crow on Auto Blitz"]]
     .map(([f, c]) => `<figure><img src="${SHOTS}${f}.png" alt="${c}" loading="lazy" onerror="this.parentNode.remove()"><figcaption>${c}</figcaption></figure>`).join("");
-  // The latest release's banner heads the page (tools/wiki/build.py copies it); without one, the logo beside the text.
-  const art = (W.banners || []).includes(W.version);
+  // The newest release banner heads the page (tools/wiki/build.py copies them; a patch without one keeps the last);
+  // without any, the logo beside the text.
+  const art = (W.banners || []).slice(-1)[0];
   const title = `<h1>From <em>Novice</em> to Knight, in Valheim</h1>`;
   const logo = `<img class="logo" src="icons/logo.png" alt="Ragnarök × Valheim logo with a Poring">`;
   return win(`Ragnarok RPG <span class="poring" aria-hidden="true"></span>`, `
-      ${art ? `<div class="hero-art"><img src="banners/${esc(W.version)}.jpg" alt="Ragnarok RPG ${esc(W.version)} release banner"></div>` : logo}
+      ${art ? `<div class="hero-art"><img src="banners/${esc(art)}.jpg" alt="Ragnarok RPG ${esc(art)} release banner"></div>` : logo}
       <div class="copy">
         ${art ? `<div class="head">${logo}${title}</div>` : title}
         <p class="lede">Remember Prontera's crowded streets, the first time you said goodbye to your Novice, the hours on Poring and Fabre for one more Job Level?</p>
@@ -672,7 +673,7 @@ function items() {
   + win("Staffs", `
       <h2>Staffs</h2>
       <p>Mage, Wizard, Acolyte and Priest spells take MATK and max eitr from the staff in hand. Valheim's own staffs work too.</p>
-      <p>Every MATK staff's left-click shoots one small sparkling ball: 60% MATK, Neutral, and half of that splashes onto every other enemy within 2.5 m. A shot costs eitr by the staff's tier (ours 6 to 14, Mistlands staffs 16, Ashlands 18). Valheim's staffs shoot it too while you hold them, and boost their element's spells: Staff of Embers Fire +5%, Staff of Frost Water +5%, Dundr Wind +5%, Staff of Fracturing Earth +5%, ThunderBlood Wind +7%.</p>
+      <p>Every MATK staff's left-click shoots one small sparkling ball: 60% MATK, Neutral, and half of that splashes onto every other enemy within 2.5 m. A shot costs eitr by the staff's tier (ours 6 to 14, Mistlands staffs 16, Ashlands 18). Valheim's staffs shoot it too while you hold them, and boost their element's spells: Staff of Embers Fire +10%, Staff of Frost Water +10%, Dundr Wind +10%, Staff of Fracturing Earth +10%, ThunderBlood Wind +15%.</p>
       <div class="tablewrap"><table>
         <tr><th></th><th>Staff</th><th>MATK</th><th>Eitr</th><th>Station</th><th>Recipe</th></tr>
         <tr>${it("RO_StaffGreydwarf", "Greydwarf Staff")}<td>45</td><td>60</td><td>Workbench Lv 2</td><td>10 Fine wood, 8 Greydwarf eye, 10 Resin</td></tr>
