@@ -295,7 +295,7 @@ const JOBS = {
   thief: { name: "Thief", tier: 1, next: "assassin", weapon: "Knives", starter: "Thief's Knife",
     blurb: "Fast and hard to hit. Double Attack, Envenom's poison, Steal, Hiding and Improve Dodge; Detoxify for the swamp." },
   acolyte: { name: "Acolyte", tier: 1, next: "priest", weapon: "A staff or a mace", starter: "Basic Rod and Acolyte's Mace",
-    blurb: "Heal (it burns Undead), Holy Light, Blessing, Increase and Decrease AGI, Angelus, Cure, Signum Crucis, Ruwach, Pneuma against arrows and spit, and Teleport home or through a Warp Portal to your Memo spots. A mace gives eitr by its biome." },
+    blurb: "Heal (it burns Undead), Holy Light, Blessing, Increase and Decrease AGI, Angelus, Cure, Signum Crucis, Ruwach, Pneuma against arrows and other physical shots, and Teleport home or through a Warp Portal to your Memo spots. A mace gives eitr by its biome." },
   merchant: { name: "Merchant", tier: 1, next: "blacksmith", weapon: "An axe, a mace or a sword", starter: "Merchant's Axe",
     blurb: "Mammonite pays coins for a big hit. Lumber and Ore Discovery give more wood and ore, Enlarge Weight Limit a bigger load, Quick Sale sells your loot for coins, and the Adventurer's Pack is a second inventory on your back (16 slots, its own weight limit) that Burden Swing swings round at everything near you. Crazy Uproar is a war cry: more damage for the whole group." },
   knight: { name: "Knight", tier: 2, from: "swordman", weapon: "Swords, spears and atgeirs", bonus: "Melee damage and health",
@@ -320,10 +320,10 @@ for (const s of W.skills) byId[s.id] = s;
 const jobKey = s => s.job.toLowerCase();
 
 const PAGES = [
-  ["Guide", [["home", "Overview"], ["start", "Getting started"], ["growth", "Character growth"], ["world", "World and levels"]]],
+  ["Guide", [["home", "Overview"], ["start", "Getting started"], ["growth", "Character growth"], ["world", "World and levels"], ["bosses", "Bosses"], ["dungeons", "Dungeons"]]],
   ["1st jobs", FIRST.map(k => [k, JOBS[k].name, true])],
   ["2nd jobs", FIRST.filter(k => JOBS[k].next).map(k => [JOBS[k].next, JOBS[JOBS[k].next].name, true])],
-  ["Reference", [["elements", "Elements"], ["items", "Items and crafting"], ["controls", "Keys and lock-on"], ["server", "Server and QoL"], ["changelog", "Changelog"]]],
+  ["Reference", [["elements", "Elements"], ["items", "Items and crafting"], ["consumables", "Potions and meads"], ["controls", "Keys and lock-on"], ["server", "Server and QoL"], ["changelog", "Changelog"]]],
 ];
 
 function renderNav(cur) {
@@ -409,7 +409,7 @@ function world() {
     </table></div>`)
   + win("World Scaling", `
     <h2>A tougher world</h2>
-    <p>Once Eikthyr is defeated, every creature has <b>1.3×</b> health and deals <b>1.3×</b> damage. From the Plains on, creatures have <b>1.7×</b> health and resist <b>30%</b> of every element but Neutral on skill hits.</p>
+    <p>Once Eikthyr is defeated, every creature has <b>1.3×</b> health and deals <b>1.3×</b> damage. From the Plains on, creatures have <b>2×</b> health and resist <b>30%</b> of every element but Neutral on skill hits.</p>
     <p>The night is busier too: twice as many <b>Skeletons</b> in the Black Forest (and some by day), and three times the <b>Wraiths</b> in the Swamp.</p>
     <p class="note">Server owners can turn this off with <code>[Server] MobScaling = false</code>. See <a href="#server">Server and QoL</a>.</p>`)
   + win("RO Monsters", `
@@ -678,7 +678,7 @@ function items() {
   + win("Staffs", `
       <h2>Staffs</h2>
       <p>Mage, Wizard, Acolyte and Priest spells take MATK and max eitr from the staff in hand. Valheim's own staffs work too.</p>
-      <p>Every MATK staff's left-click shoots one small sparkling ball: 60% MATK, Neutral, and half of that splashes onto every other enemy within 2.5 m. A shot costs eitr by the staff's tier (ours 6 to 14, Mistlands staffs 16, Ashlands 18). Valheim's staffs shoot it too while you hold them, and boost their element's spells: Staff of Embers Fire +10%, Staff of Frost Water +10%, Dundr Wind +10%, Staff of Fracturing Earth +10%, ThunderBlood Wind +15%.</p>
+      <p>Every MATK staff's left-click shoots one small sparkling ball: 40% MATK, Neutral, and half of that splashes onto every other enemy within 2.5 m. A shot costs eitr by the staff's tier (ours 6 to 14, Mistlands staffs 16, Ashlands 18). Valheim's staffs shoot it too while you hold them, and boost their element's spells: Staff of Embers Fire +10%, Staff of Frost Water +10%, Dundr Wind +10%, Staff of Fracturing Earth +10%, ThunderBlood Wind +15%. An Acolyte or Priest can also use the Orb of Ahri staff (120 MATK, Holy skills +15%); for every other job it's a plain Valheim staff.</p>
       <div class="tablewrap"><table>
         <tr><th></th><th>Staff</th><th>MATK</th><th>Eitr</th><th>Station</th><th>Recipe</th></tr>
         <tr>${it("RO_StaffGreydwarf", "Greydwarf Staff")}<td>45</td><td>60</td><td>Workbench Lv 2</td><td>10 Fine wood, 8 Greydwarf eye, 10 Resin</td></tr>
@@ -715,7 +715,8 @@ function controls() {
       ["Alt+A", "Status window: vitals, attack, MATK, armor, resistances, active effects; the Jobs tab shows every job's level and what it needs to advance"],
       ["Alt+S", "Keys 1–8 cast skills (press again for the next skill stack)"],
       ["Alt+E", "Keys 1–8 back to the item hotbar"],
-      ["Alt+F", "Lock on, or let go"]])}
+      ["Alt+F", "Lock on, or let go"],
+      ["Alt+L", "Loot Filter: what's picked up, marked on the map or not dropped at all (see <a href=\"#server\">Server and QoL</a>)"]])}
     <p class="note">Rebind them in SeneaL's settings (F1) or the BepInEx config. The <b>Job</b> and <b>Status</b> tabs on SeneaL's character screen open the same windows.</p>`)
   + win("Controller", `<h2>Controller</h2><p class="note">Valheim's default layout. Turn off with <code>[Gamepad] Enabled</code>.</p>${t([
       ["LT + Y X B A", "Cast the 4 skills of the current page"],
@@ -736,16 +737,114 @@ function controls() {
       </ul>`);
 }
 
+function bosses() {
+  const biomes = ["Black Forest", "Swamp", "Mountains", "Plains", "Mistlands", "Ashlands", "Deep North"];
+  const rows = biomes.map(b => `<tr><td>${b}</td><td><b>???</b></td><td>Field boss</td></tr>`).join("")
+    + DUNGEONS.map(([d, b]) => `<tr><td>${b}</td><td><b>???</b></td><td>Dungeon boss, ${d}</td></tr>`).join("");
+  return win("Bosses", `
+    <h2>Something is out there</h2>
+    <p>Beyond Valheim's Forsaken, every biome from the Black Forest to the Deep North has a boss of its own: one of Rune-Midgard's great monsters, roaming the world. Every <a href="#dungeons">dungeon</a> keeps another one in its depths. Who they are is for you to find out.</p>
+    <div class="tablewrap"><table>
+      <tr><th>Biome</th><th>Boss</th><th>Kind</th></tr>
+      ${rows}
+    </table></div>`)
+  + win("How They Appear", `
+    <h2>How a field boss appears</h2>
+    <ul class="growlist">
+      <li><b>From your activity:</b> chopping, mining and fighting in a biome can wake its boss. The farther you are from the world's centre, the likelier it gets.</li>
+      <li><b>One at a time:</b> each boss is unique in the world. While it's out, it can't appear anywhere else.</li>
+      <li><b>You'll know:</b> its arrival is announced to everyone, and it fights with skills of its own, calls followers and hits far harder than anything around it.</li>
+      <li><b>It doesn't wait forever:</b> left alone, it leaves again.</li>
+      <li><b>After the kill:</b> it leaves a tomb and a map pin where it fell. It can't return until its respawn time has passed; the tomb shows how long is left.</li>
+      <li><b>Calling one:</b> some rare items can call a biome's boss on purpose, if you'd rather not wait.</li>
+    </ul>`)
+  + win("What They Leave", `
+    <h2>Trophies and treasures</h2>
+    <p>Every boss can drop its own <b>trophy</b>, and rarer still, a <b>material</b> that the forge turns into a unique piece of gear with an effect of its own: something no other item gives.</p>
+    <p class="note">Tip: the <i>Loot Filter</i> (<code>Alt+L</code>) can pick boss drops up and mark them on the map for you.</p>`)
+  + win("The Last One", `
+    <h2>And then there's the last one</h2>
+    <p>Some say that the trophies of every field boss, bound together, can break a seal that should never be broken. What sleeps behind it is worse than all of them.</p>`)
+  + win("Server Settings", `
+    <h2>Server settings</h2>
+    <div class="tablewrap"><table>
+      <tr><th>Setting</th><th>What</th></tr>
+      <tr><td><code>[Server] RoMvps</code></td><td><code>false</code>: no bosses appear (one already out stays until killed or it leaves)</td></tr>
+      <tr><td><code>[Server] MvpSpawnChance</code></td><td>How likely a boss appears from activity, × the default (1, from 0 to 10). <code>0</code>: they only come when called</td></tr>
+      <tr><td><code>[Server] MvpRespawnHours</code></td><td>Hours of game time after a kill before that boss can appear again (default 4)</td></tr>
+    </table></div>`);
+}
+
+function consumables() {
+  const it = (icon, name) => `<td><img class="px" src="icons/items/${icon}.png" alt=""></td><td><b>${name}</b></td>`;
+  return win("Potions", `
+    <h2>Rune-Midgard potions</h2>
+    <p>Potions work at once, the RO way: no healing over time. Health potions share one <b>5 s</b> cooldown, and eitr potions have their own, so you can drink one of each back to back. The <a href="#dungeons">mysterious merchant</a> sells them in every dungeon, 50 of each until the next refill.</p>
+    <div class="tablewrap"><table>
+      <tr><th></th><th>Potion</th><th>At once</th><th>Price</th></tr>
+      <tr>${it("RO_PotionRed", "Red Potion")}<td>+45 health</td><td>10 coins</td></tr>
+      <tr>${it("RO_PotionGreen", "Green Potion")}<td>+85 health</td><td>30 coins</td></tr>
+      <tr>${it("RO_PotionWhite", "White Potion")}<td>+170 health</td><td>80 coins</td></tr>
+      <tr>${it("RO_GrapeJuice", "Grape Juice")}<td>+20 eitr</td><td>10 coins</td></tr>
+      <tr>${it("RO_Strawberry", "Strawberry")}<td>+40 eitr</td><td>30 coins</td></tr>
+      <tr>${it("RO_PotionBlue", "Blue Potion")}<td>+80 eitr</td><td>80 coins</td></tr>
+    </table></div>`)
+  + win("Meads", `
+    <h2>Our meads</h2>
+    <p>Three meads of the mod's own, brewed like Valheim's: make the <b>mead base</b> at a cauldron, then leave it in a fermenter for <b>6 meads</b>. The mysterious merchant sells them too (5 of each until the next refill).</p>
+    <div class="tablewrap"><table>
+      <tr><th></th><th>Mead</th><th>Effect</th><th>Mead base (cauldron)</th><th>Price</th></tr>
+      <tr>${it("RO_MeadMending", "Mead of Mending")}<td>Your gear wears <b>half as fast</b> for 10 minutes: weapons, tools, armour and shields</td><td>10 Honey, 10 Resin, 2 Copper, 1 Tin</td><td>150 coins</td></tr>
+      <tr>${it("RO_MeadWarding", "Mead of Warding")}<td>Die within 10 minutes and you <b>lose nothing</b>: no grave, everything you carry stays with you</td><td>10 Honey, 5 Thistle, 5 Bone fragments, 5 Greydwarf eye</td><td>250 coins</td></tr>
+      <tr>${it("RO_MeadProtection", "Chemical Protection Mead")}<td><b>Full Chemical Protection</b> for 5 minutes, as the RO skill: no monster can strip your gear or break your armour</td><td>10 Cloudberries, 5 Red jute, 3 Freeze gland, 5 Obsidian</td><td>200 coins, after Moder</td></tr>
+    </table></div>`);
+}
+
+const DUNGEONS = [["Payon Cave", "Black Forest"], ["Glast Heim", "Swamp"], ["Geffen Dungeon", "Mountains"], ["Pyramid", "Plains"],
+  ["Cursed Abbey", "Mistlands"], ["Thor's Volcano", "Ashlands"], ["Odin's Temple", "Deep North"]];
+
+function dungeons() {
+  const rows = DUNGEONS.map(([d, b]) => `<tr><td><b>${d}</b></td><td>${b}</td><td>2</td><td>???</td></tr>`).join("");
+  return win("Dungeons", `
+    <h2>The dungeons of Rune-Midgard</h2>
+    <p>Rune-Midgard's dungeons have come to Valheim: one for every biome from the Black Forest to the Deep North, each laid out after its RO map, with its own music. Look for a stone gate glowing in the biome's colour; step through and you're inside.</p>
+    <div class="tablewrap"><table>
+      <tr><th>Dungeon</th><th>Biome</th><th>Levels</th><th>Boss</th></tr>
+      ${rows}
+    </table></div>`)
+  + win("Inside", `
+    <h2>Inside a dungeon</h2>
+    <ul class="growlist">
+      <li><b>Finding one:</b> a few gates stand in every biome when the world is made, and more turn up as you explore new land.</li>
+      <li><b>Levels:</b> glowing warps lead down to the next level and back out.</li>
+      <li><b>Monsters:</b> packs of the biome's creatures, and RO monsters of their own, with more stars the deeper you go. They never fight each other.</li>
+      <li><b>Dungeon Coins:</b> every monster drops the dungeon's own coin, more for higher stars.</li>
+      <li><b>The gauge:</b> each kill fills the dungeon's gauge, shown while you're inside. When it's full and someone stands on the last level, its boss wakes.</li>
+      <li><b>Refill:</b> every 3 in-game days, while nobody is inside, the dungeon fills up again: new monsters, new stock, the gauge back to empty.</li>
+    </ul>`)
+  + win("The Merchant", `
+    <h2>A mysterious merchant</h2>
+    <p>Somewhere in every dungeon waits a <b>mysterious merchant</b> with a heavy coin pouch. Nobody knows who he is or how he got there, and the monsters leave him alone.</p>
+    <ul class="growlist">
+      <li><b>He buys your Dungeon Coins</b> for gold, the deeper dungeons' coins for more.</li>
+      <li><b>He sells</b> what the dungeon's biome is known for: its meat, trophies, metal, resistance meads and a feast. Every merchant also has Rune-Midgard potions (Red, Green and White heal at once; Grape Juice, Strawberry and Blue Potion restore eitr) and special meads.</li>
+      <li><b>Stock is limited</b> and shared by everyone in the world. He restocks when the dungeon refills, and now and then he has something rare.</li>
+    </ul>`);
+}
+
 function server() {
   return win("Server Settings", `<h2>Server settings</h2>
       <p>Every setting of the mod, server ones included, is in <b>Ragnarok RPG</b> on the main menu, under Start game. They apply to the worlds you start or host. A dedicated server reads them from <code>BepInEx/config/ragnarokjobs.valheim.cfg</code>. In game they're under <b>Esc → Mod Settings</b> at any time (server ones by admins only), and every player gets the server's values.</p>
       <div class="tablewrap"><table>
         <tr><th>Setting</th><th>What</th></tr>
-        <tr><td><code>[Server] MobScaling</code></td><td><code>false</code> keeps vanilla creatures (no 1.3× / 1.7× health)</td></tr>
+        <tr><td><code>[Server] MobScaling</code></td><td><code>false</code> keeps vanilla creatures (no 1.3× / 2× health)</td></tr>
+        <tr><td><code>[Server] SummoningStaffs</code></td><td><code>true</code> allows summoning staffs such as the Dead Raiser (default off)</td></tr>
+        <tr><td><code>[Server] VanillaStaffAttack</code></td><td><code>true</code> lets Valheim's attack staffs keep their own left-click and damage (default off)</td></tr>
         <tr><td><code>[Server] JobExpRate</code></td><td>Multiplies job EXP from kills (default 1, from 0.1 to 10)</td></tr>
         <tr><td><code>[Server] PoringDensity</code></td><td>Porings in the Meadows, × the Boars (default 5, up to 10). <code>0</code>: no Porings</td></tr>
         <tr><td><code>[Server] PoisonSporeDensity</code></td><td>Poison Spores in the Black Forest, × the Greydwarfs (default 2, up to 10). <code>0</code>: no Poison Spores</td></tr>
         <tr><td><code>[Server] RoMonsters</code></td><td><code>false</code>: no RO monsters spawn (Porings, Poison Spores and the RO monsters to come). Valheim's creatures stay</td></tr>
+        <tr><td><code>[Server] RoMvps</code>, <code>MvpSpawnChance</code>, <code>MvpRespawnHours</code></td><td>The roaming bosses: on or off, how often, how soon they return. See <a href="#bosses">Bosses</a></td></tr>
         <tr><td><code>[QoL] StackSizeMultiplier</code></td><td>Stacks up to 5×</td></tr>
         <tr><td><code>[QoL] NoFoodDegradation</code></td><td>Full food stats until it runs out</td></tr>
         <tr><td><code>[QoL] AutoStoreProduce</code></td><td>Smelters, kilns, windmills, fermenters, beehives, cooking stations… put what they make into a nearby chest</td></tr>
@@ -762,6 +861,7 @@ function server() {
         <li><b>Status window</b> (<code>Alt+A</code>): your stats with every bonus worked in, and a <i>Jobs</i> tab with every job's level, EXP and points. The <i>Inherited</i> section lists what your mastered jobs give.</li>
         <li><b>Item bar or skill bar:</b> keys 1–8 cast skills; <code>Alt+E</code> switches them back to the item hotbar, <code>Alt+S</code> to the next skill stack.</li>
         <li><b>With SeneaL UI:</b> the Main Hand and Off Hand slots can be dragged from like any other item, and equipped weapons stay in their hotbar cell.</li>
+        <li><b>Two trinket slots:</b> wear two different trinkets at once (two of the same kind can't be paired). Both adrenaline bars add up into one, and when it fills, both trinkets' effects fire. With SeneaL UI the second is a <i>Trinket 2</i> slot on the equipment doll; without it, equip a second trinket from your inventory and it fills the empty slot.</li>
       </ul>
       <h3>Server settings (off by default)</h3>
       <ul class="growlist">
@@ -774,6 +874,15 @@ function server() {
             <li>A <b>cauldron</b> lists the recipes you know that it can make. Switched on, it makes one batch every 10 s while there's fire under it, from the chests' ingredients, into a chest. Recipes take turns.</li>
             <li>Each row's gear sets its rules: how much of each raw food or ingredient to keep in the chests, and how much of the food to stop at.</li>
           </ul></li>
+      </ul>
+      <h3>Loot Filter</h3>
+      <p>Press <code>Alt+L</code> (or open the <i>Loot Filter</i> tab on SeneaL's character screen) to decide what happens to loot, for you only. Every item is <b>Normal</b> until you put it in a list; the picker shows the items you have found.</p>
+      <ul class="growlist">
+        <li><b>Ignore:</b> never picked up automatically (you can still take it by hand). With <b>Disable drop</b> on, ignored items don't drop at all from your kills, chopping, mining and gathering; other players still get theirs.</li>
+        <li><b>Rare</b> and <b>Very Rare:</b> a mark on the map while the item lies there, and a sound when it drops (each with its own). <b>Play</b> lets you hear them; <b>−</b> / <b>+</b> set their volume.</li>
+        <li><b>Drop chance:</b> type a number in <i>Mark as Rare when the drop chance is at most … %</i>, and any item that drops that rarely or rarer counts as Rare without listing it. Empty or 0: off.</li>
+        <li><b>Boss drops:</b> on <i>Always</i> (the default), anything only bosses drop is always picked up and marked Rare, even if you ignored it.</li>
+        <li><b>Filter: Off</b> turns it all off without losing your lists. They're kept in <code>BepInEx/config/RagnarokJobs.lootfilter.txt</code>.</li>
       </ul>
       <h3>Your own settings</h3>
       <div class="tablewrap"><table>
@@ -815,7 +924,7 @@ function changelog() {
 
 /* ───────── Routing and search ───────── */
 
-const ROUTES = { home, start, growth, world, elements, items, controls, server, changelog };
+const ROUTES = { home, start, growth, world, bosses, dungeons, elements, items, consumables, controls, server, changelog };
 
 function route() {
   let k = (location.hash || "#home").slice(1);
