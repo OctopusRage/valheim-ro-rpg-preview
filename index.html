@@ -716,7 +716,8 @@ function controls() {
       ["Alt+S", "Keys 1–8 cast skills (press again for the next skill stack)"],
       ["Alt+E", "Keys 1–8 back to the item hotbar"],
       ["Alt+F", "Lock on, or let go"],
-      ["Alt+L", "Loot Filter: what's picked up, marked on the map or not dropped at all (see <a href=\"#server\">Server and QoL</a>)"]])}
+      ["Alt+L", "Loot Filter: what's picked up, marked on the map or not dropped at all (see <a href=\"#server\">Server and QoL</a>)"],
+      ["Alt+B", "Build Materials: pick a piece and take what it needs from nearby chests into your inventory"]])}
     <p class="note">Rebind them in SeneaL's settings (F1) or the BepInEx config. The <b>Job</b> and <b>Status</b> tabs on SeneaL's character screen open the same windows.</p>`)
   + win("Controller", `<h2>Controller</h2><p class="note">Valheim's default layout. Turn off with <code>[Gamepad] Enabled</code>.</p>${t([
       ["LT + Y X B A", "Cast the 4 skills of the current page"],
@@ -769,7 +770,7 @@ function bosses() {
     <h2>Server settings</h2>
     <div class="tablewrap"><table>
       <tr><th>Setting</th><th>What</th></tr>
-      <tr><td><code>[Server] RoMvps</code></td><td><code>false</code>: no bosses appear (one already out stays until killed or it leaves)</td></tr>
+      <tr><td><code>[Server] RoMvps</code></td><td><code>false</code>: no roaming bosses appear, none can be called (one already out stays until killed or it leaves). Dungeon bosses still come</td></tr>
       <tr><td><code>[Server] MvpSpawnChance</code></td><td>How likely a boss appears from activity, × the default (1, from 0 to 10). <code>0</code>: they only come when called</td></tr>
       <tr><td><code>[Server] MvpRespawnHours</code></td><td>Hours of game time after a kill before that boss can appear again (default 4)</td></tr>
     </table></div>`);
@@ -850,11 +851,13 @@ function server() {
         <tr><td><code>[QoL] AutoStoreProduce</code></td><td>Smelters, kilns, windmills, fermenters, beehives, cooking stations… put what they make into a nearby chest</td></tr>
         <tr><td><code>[QoL] AutoStoreRange</code></td><td>How far a chest can be for the two settings above, 2–40 m (default 15)</td></tr>
         <tr><td><code>[QoL] AutoCookFromChests</code></td><td>Shift + Use on a cooking station or cauldron: pick what it cooks from nearby chests</td></tr>
+        <tr><td><code>[QoL] TakeBuildMaterials</code>, <code>TakeBuildRange</code></td><td>The Build Materials window (<code>Alt+B</code>) may take from chests, and how far, 2–40 m (default 15). On by default</td></tr>
       </table></div>
-      <p class="note">QoL settings are off by default. What each one does: <i>Quality of life</i> below.</p>`)
+      <p class="note">QoL settings are off by default, except TakeBuildMaterials. What each one does: <i>Quality of life</i> below.</p>`)
   + win("Quality of Life", `<h2>Quality of life</h2>
       <h3>Always on</h3>
       <ul class="growlist">
+        <li><b>Build Materials</b> (<code>Alt+B</code>, or the <i>Build Materials</i> tab on SeneaL's character screen): every piece you can build, like the hammer's menu, with category tabs and a search. Hover a piece to see what it needs, what you carry and what chests within 15 m hold; click it and what you're missing goes into your inventory, to carry wherever you build. The <i>For 1×</i> buttons set how many to take for. Dimmed pieces can't be paid for even with the chests.</li>
         <li><b>Repair all:</b> a button beside the Repair button at workbenches and forges mends every worn item that station can repair, in one press.</li>
         <li><b>Raincoat:</b> craft it at a Workbench Lv 3 (4 Deer hide, 8 Leather scraps, 12 Resin). While you wear it you don't get Wet.</li>
         <li><b>Tamed creatures follow you:</b> press Use on any tamed creature (boars and hens too) to make it follow you or stay. One you tame with a <a href="#items">lure</a> follows you at once.</li>
